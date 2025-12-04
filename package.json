@@ -1,0 +1,42 @@
+{
+  "name": "@groupe-savoy/teltonika-sdk",
+  "version": "0.0.0",
+  "description": "A TypeScript SDK for interacting with Teltonika devices.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/Groupe-Savoy/teltonika-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/Groupe-Savoy/teltonika-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Groupe-Savoy/teltonika-sdk.git"
+  },
+  "author": "Emilien Leroy <eleroy@savoy-international.com>",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsx watch",
+    "dev:server:codec8e:tcp": "tsx watch ./examples/server/codec8e.tcp.ts",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "bumpp": "^10.3.1",
+    "tsdown": "^0.16.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.9"
+  }
+}
