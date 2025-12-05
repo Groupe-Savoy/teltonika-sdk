@@ -26,17 +26,23 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsx watch",
-    "dev:server:codec8e:tcp": "tsx watch ./examples/server/codec8e.tcp.ts",
+    "dev:server:codec8e:tcp": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/server/codec8e.tcp.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "@types/node": "^24.10.1",
     "bumpp": "^10.3.1",
+    "cross-env": "^10.1.0",
     "tsdown": "^0.16.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.9"
+  },
+  "dependencies": {
+    "debug": "^4.4.3",
+    "uuid": "^13.0.0"
   }
 }
