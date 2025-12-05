@@ -26,6 +26,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsx watch",
+    "dev:parser:codec8e": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec8e.ts",
     "dev:server:codec8e:tcp": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/server/codec8e.tcp.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
