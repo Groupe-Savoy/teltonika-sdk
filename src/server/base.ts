@@ -1,6 +1,7 @@
+import { logger } from "@/logger";
 import { EventEmitter } from "node:events";
 import type { Socket } from "node:net";
-import type { TeltonikaDevice } from "@/device";
+import { TeltonikaDevice } from "@/device";
 import {
   TeltonikaDataCodec,
   TeltonikaGPRSCodec,
@@ -62,15 +63,40 @@ export abstract class TeltonikaBaseServer<
     };
   }
 
-  abstract onDeviceConnect(socket: U): void;
+  protected onDeviceConnect(socket: U) {
+    const device = new TeltonikaDevice<U>({ socket });
 
-  abstract onDeviceInit(device: TeltonikaDevice<U>, data: Buffer): void;
+    logger.info(`connect: ${device.uuid}`);
+    this.addDevice(device);
 
-  abstract onDeviceData(device: TeltonikaDevice<U>, data: Buffer): void;
+    socket.on('data', (data) => {
+      this.parsers.data.isImei(data)
+        ? this.onDeviceInit(device, data)
+        : this.onDeviceData(device, data);
+    });
 
-  abstract onDeviceClose(device: TeltonikaDevice<U>): void;
+    socket.on('close', () => this.onDeviceClose(device));
+  }
 
-  abstract listen(port: number, host?: string): void;
+  protected onDeviceInit(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+    logger.info(`init: ${device.uuid}`);
+    device.init(data.toString());
+
+    this.emit('init', device);
+  }
+
+  protected onDeviceData(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+    logger.info(`data: ${device.uuid}`)
+
+    device.socket.write(Buffer.from([0x00, 0x00, 0x00, 0x01]))
+    this.emit('data', device, this.parsers.data.parseAVL(data));
+  }
+
+  protected onDeviceClose(device: TeltonikaDevice<U>) {
+    logger.info(`close: ${device.uuid}`);
+    this.removeDevice(device);
+    this.emit('close', device);
+  }
 
   protected addDevice(device: TeltonikaDevice<U>) {
     this.devices.push(device);
@@ -79,4 +105,6 @@ export abstract class TeltonikaBaseServer<
   protected removeDevice(device: TeltonikaDevice<U>) {
     this.devices = this.devices.filter((d) => d.uuid !== device.uuid);
   }
+
+  abstract listen(port: number, host?: string): void;
 }
