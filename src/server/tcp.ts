@@ -1,12 +1,19 @@
 import { logger } from "@/logger";
-import { TeltonikaBaseServer, type TeltonikaBaseServerOptions } from "./base";
+import { TeltonikaBaseServer } from "./base";
 import { Server, createServer, Socket } from 'node:net';
 import { TeltonikaDevice } from "@/device";
+import type { TeltonikaDataCodec, TeltonikaGPRSCodec } from "@/codec";
 
-export type TeltonikaTCPServerOptions = TeltonikaBaseServerOptions;
-
-export class TeltonikaTCPServer extends TeltonikaBaseServer<Server, Socket> {
-  constructor(options: TeltonikaTCPServerOptions) {
+export class TeltonikaTCPServer<
+  DC extends TeltonikaDataCodec, 
+  GC extends TeltonikaGPRSCodec
+> extends TeltonikaBaseServer<Server, Socket, DC, GC> {
+  constructor(options: {
+    codecs: {
+      data: DC;
+      gprs: GC;
+    };
+  }) {
     super(options);
     this.server = createServer(this.onDeviceConnect.bind(this));
   }

@@ -8,21 +8,21 @@ import {
 import { TeltonikaParserFactory } from "@/parser";
 import type { DataParserRegistry, GprsParserRegistry } from "@/parser";
 
-type ParserForCodec<C> =
-  C extends keyof DataParserRegistry ? DataParserRegistry[C] :
-  C extends keyof GprsParserRegistry ? GprsParserRegistry[C] :
-  any;
-
-export interface TeltonikaBaseServerOptions {
+export interface TeltonikaBaseServerOptions<
+  DC extends TeltonikaDataCodec = TeltonikaDataCodec,
+  GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
+> {
   codecs?: {
-    data: TeltonikaDataCodec;
-    gprs: TeltonikaGPRSCodec;
+    data: DC;
+    gprs: GC;
   };
 }
 
 export declare interface TeltonikaBaseServer<
   T,
   U extends Socket,
+  DC extends TeltonikaDataCodec = TeltonikaDataCodec,
+  GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
 > {
   on(event: "init", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "data", listener: (device: TeltonikaDevice<U>, data: any) => void): this;
@@ -32,24 +32,26 @@ export declare interface TeltonikaBaseServer<
 export abstract class TeltonikaBaseServer<
   T,
   U extends Socket,
+  DC extends TeltonikaDataCodec = TeltonikaDataCodec,
+  GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
 > extends EventEmitter {
   protected server!: T;
 
   protected devices: TeltonikaDevice<U>[] = [];
 
-  protected codecs: { data: TeltonikaDataCodec; gprs: TeltonikaGPRSCodec };
+  protected codecs: { data: DC; gprs: GC };
 
-  protected parsers: {
-    data: ParserForCodec<TeltonikaDataCodec>;
-    gprs: ParserForCodec<TeltonikaGPRSCodec>;
+  public parsers: {
+    data: DataParserRegistry[DC];
+    gprs: GprsParserRegistry[GC];
   };
 
-  constructor(options: TeltonikaBaseServerOptions = {}) {
+  constructor(options: TeltonikaBaseServerOptions<DC, GC> = {}) {
     super();
 
     const codecs = options.codecs ?? {
-      data: TeltonikaDataCodec.Codec8e,
-      gprs: TeltonikaGPRSCodec.Codec12,
+      data: TeltonikaDataCodec.Codec8e as DC,
+      gprs: TeltonikaGPRSCodec.Codec12 as GC,
     };
 
     this.codecs = codecs;
@@ -61,9 +63,13 @@ export abstract class TeltonikaBaseServer<
   }
 
   abstract onDeviceConnect(socket: U): void;
+
   abstract onDeviceInit(device: TeltonikaDevice<U>, data: Buffer): void;
+
   abstract onDeviceData(device: TeltonikaDevice<U>, data: Buffer): void;
+
   abstract onDeviceClose(device: TeltonikaDevice<U>): void;
+
   abstract listen(port: number, host?: string): void;
 
   protected addDevice(device: TeltonikaDevice<U>) {
