@@ -1,12 +1,11 @@
 import { type TeltonikaCodec, TeltonikaDataCodec } from "@/codec";
 import { TeltonikaBaseParser } from "./base";
+import { TeltonikaCodec16AVLPacket } from "@/packet/codec16";
 
-export interface TeltonikaCodec16AVL {}
-
-export class TeltonikaCodec16Parser extends TeltonikaBaseParser<TeltonikaCodec16AVL> {
+export class TeltonikaCodec16Parser extends TeltonikaBaseParser<TeltonikaCodec16AVLPacket> {
   static codec: TeltonikaCodec = TeltonikaDataCodec.Codec16;
 
-  parseAVL(data: Buffer) {
-    return {}
+  parsePacket(data: Buffer): TeltonikaCodec16AVLPacket {
+    return new TeltonikaCodec16AVLPacket(data);
   }
 }
