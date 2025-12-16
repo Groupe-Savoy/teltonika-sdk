@@ -16,6 +16,13 @@ export enum TeltonikaIoGroup {
   NX = 0
 }
 
+export type TeltonikaIo = Record<number, Buffer>;
+
+export type TeltonikaIoLayout = {
+  countLength?: number;
+  idLength?: number;
+}
+
 export abstract class TeltonikaBasePacket<T = any> {
   protected preamble!: Buffer;
   protected size!: number;
@@ -131,6 +138,20 @@ export abstract class TeltonikaBasePacket<T = any> {
     return buf;
   }
 
+  private readUIntByLength(
+    data: Buffer,
+    offset: number,
+    length: number
+  ): number {
+    switch (length) {
+      case 1: return data.readUInt8(offset);
+      case 2: return data.readUInt16BE(offset);
+      case 4: return data.readUInt32BE(offset);
+      default:
+        throw new Error(`Unsupported integer length: ${length}`);
+    }
+  }
+
   /**
    * Calculate CRC-16 (IBM / ANSI) checksum for Teltonika packets.
    * CRC is calculated over the "data field":
@@ -191,6 +212,7 @@ export abstract class TeltonikaBasePacket<T = any> {
    *   - 4 → N4 (4 byte values)
    *   - 8 → N8 (8 byte values)
    *   - 0 → NX (variable length values)
+   * @param layout - Define the layout to parse io group.
    *
    * @returns Parsed IO values and updated offset
    *
@@ -215,18 +237,24 @@ export abstract class TeltonikaBasePacket<T = any> {
    * // 5
    * ```
    */
-  public parseIoGroup(data: Buffer, offset: number, n: TeltonikaIoGroup) {
+  public parseIoGroup(
+    data: Buffer,
+    offset: number,
+    n: TeltonikaIoGroup,
+    layout: TeltonikaIoLayout = {}
+  ) {
+    const { countLength = 2, idLength = 2 } = layout;
     const io: Record<number, Buffer> = {};
-    const count = data.readUInt16BE(offset);
+    const count = this.readUIntByLength(data, offset, countLength);
 
-    offset += 2;
+    offset += countLength;
 
     for (let i = 0; i < count; i++) {
       let value: Buffer;
-      const id = data.readUInt16BE(offset);
-  
-      offset += 2;
-  
+      const id = this.readUIntByLength(data, offset, idLength);
+
+      offset += idLength;
+
       if (n > 0) {
         value = data.subarray(offset, offset + n);
         offset += n;
@@ -244,13 +272,14 @@ export abstract class TeltonikaBasePacket<T = any> {
     return { io, offset };
   }
 
-    /**
+  /**
    * Parse all IO groups (N1, N2, N4, N8, NX) of an AVL record
    * and merge them into a single IO object.
    *
    * @param {Buffer} data - Buffer containing IO section of the AVL record
    * @param {number} total - Total number of IO properties (N)
    * @param {TeltonikaIoGroup[]} groups - IO group value sizes (default: [1, 2, 4, 8, 0])
+   * @param {TeltonikaIoLayout} layout - Define the layout to parse IO.
    *
    * @returns Object mapping AVL IO IDs to raw Buffer values
    *
@@ -298,18 +327,34 @@ export abstract class TeltonikaBasePacket<T = any> {
    * // }
    * ```
    */
-  public parseIo(data: Buffer, total: number, groups: TeltonikaIoGroup[] = [1, 2, 4, 8, 0]) {
-    const initial = { io: {} as Record<number, Buffer>, offset: 0 };
-    const io = groups.reduce((acc, size) => {
-      const { io, offset } = this.parseIoGroup(data, acc.offset, size);
-      return { io: { ...acc.io, ...io }, offset };
-    }, initial).io;
+  public parseIo(
+    data: Buffer,
+    total: number,
+    groups: TeltonikaIoGroup[] = [1, 2, 4, 8, 0],
+    layout: TeltonikaIoLayout = {}
+  ): Record<number, Buffer> {
+    const initial = { io: {} as TeltonikaIo, offset: 0 };
+    const result = groups.reduce((acc, size) => {
+      const { io, offset } = this.parseIoGroup(
+        data,
+        acc.offset,
+        size,
+        layout
+      );
 
-    if (Object.keys(io).length !== total) {
-      throw new Error(`parsed IO count ${Object.keys(io).length} does not match total ${total}`);
+      return {
+        io: { ...acc.io, ...io },
+        offset
+      };
+    }, initial);
+
+    if (Object.keys(result.io).length !== total) {
+      throw new Error(
+        `Parsed IO count ${Object.keys(result.io).length} does not match total ${total}`
+      );
     }
 
-    return io;
+    return result.io;
   }
 
   /**
@@ -322,17 +367,24 @@ export abstract class TeltonikaBasePacket<T = any> {
    * from these counters and value sizes.
    *
    * @param {Buffer} data - Buffer containing the IO section, starting at `N1 of One Byte IO`
+   * @param {TeltonikaIoGroup[]} groups - IO group value sizes (default: [1, 2, 4, 8, 0])
+   * @param {TeltonikaIoLayout} layout - Define the layout to calcul IO length.
    * @returns Total number of bytes occupied by the IO section
    */
-  public calculateIoLength(data: Buffer): number {
+  public calculateIoLength(
+    data: Buffer,
+    groups: TeltonikaIoGroup[] = [1, 2, 4, 8, 0],
+    layout: TeltonikaIoLayout = {}
+  ): number {
+    const { countLength = 2, idLength = 2 } = layout;
     let offset = 0;
 
-    for (const size of [1, 2, 4, 8, 0]) {
-      const count = data.readUInt16BE(offset);
-      offset += 2;
+    for (const size of groups) {
+      const count = this.readUIntByLength(data, offset, countLength);
+      offset += countLength;
 
       for (let i = 0; i < count; i++) {
-        offset += 2;
+        offset += idLength;
 
         if (size > 0) {
           offset += size;

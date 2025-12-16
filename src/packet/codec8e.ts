@@ -1,4 +1,5 @@
-import { HEADER_AVL_LENGTH, TeltonikaBasePacket } from "./base";
+import { HEADER_AVL_LENGTH, TeltonikaBasePacket, TeltonikaIoGroup } from "./base";
+import type { TeltonikaCodec8AVLRecord } from "./codec8";
 
 export const CODEC8E_AVL_TIMESTAMP_LENGTH = 8;
 export const CODEC8E_AVL_PRIORITY_LENGTH = 1;
@@ -6,20 +7,20 @@ export const CODEC8E_AVL_GPS_LENGTH = 15;
 export const CODEC8E_AVL_EVENT_IO_LENGTH = 2;
 export const CODEC8E_AVL_NUMBER_IO_LENGTH = 2;
 
-export interface TeltonikaCodec8eAVLRecord {
-  timestamp: Date;
-  priority: number;
-  gps: {
-    longitude: number;
-    latitude: number;
-    altitude: number;
-    angle: number;
-    satellites: number;
-    speed: number;
-  };
-  event: number;
-  io: Record<number, Buffer>;
+export const CODEC8E_IO_GROUPS = [
+  TeltonikaIoGroup.N1,
+  TeltonikaIoGroup.N2,
+  TeltonikaIoGroup.N4,
+  TeltonikaIoGroup.N8,
+  TeltonikaIoGroup.NX,
+];
+
+export const CODEC8E_IO_LAYOUT = {
+  countLength: 2,
+  idLength: 2,
 }
+
+export type TeltonikaCodec8eAVLRecord = TeltonikaCodec8AVLRecord;
 
 export class TeltonikaCodec8eAVLPacket extends TeltonikaBasePacket<TeltonikaCodec8eAVLRecord> {
   parseRecords(raw: Buffer): TeltonikaCodec8eAVLRecord[] {
@@ -50,9 +51,9 @@ export class TeltonikaCodec8eAVLPacket extends TeltonikaBasePacket<TeltonikaCode
       offset += CODEC8E_AVL_NUMBER_IO_LENGTH;
 
       const start = offset;
-      const io = this.parseIo(raw.subarray(start), total);
+      const io = this.parseIo(raw.subarray(start), total, CODEC8E_IO_GROUPS, CODEC8E_IO_LAYOUT);
 
-      offset += this.calculateIoLength(raw.subarray(start));
+      offset += this.calculateIoLength(raw.subarray(start), CODEC8E_IO_GROUPS, CODEC8E_IO_LAYOUT);
 
       records.push({
         timestamp,
