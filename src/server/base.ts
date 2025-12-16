@@ -89,7 +89,7 @@ export abstract class TeltonikaBaseServer<
     logger.info(`data: ${device.uuid}`)
 
     device.socket.write(Buffer.from([0x00, 0x00, 0x00, 0x01]))
-    this.emit('data', device, this.parsers.data.parseAVL(data));
+    this.emit('data', device, this.parsers.data.parsePacket(data));
   }
 
   protected onDeviceClose(device: TeltonikaDevice<U>) {

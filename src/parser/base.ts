@@ -1,6 +1,7 @@
 import type { TeltonikaCodec } from "@/codec";
+import type { TeltonikaBasePacket } from "@/packet/base";
 
-export abstract class TeltonikaBaseParser<T> {
+export abstract class TeltonikaBaseParser<T extends TeltonikaBasePacket> {
   static codec: TeltonikaCodec;
 
   public isImei(data: Buffer) {
@@ -12,10 +13,10 @@ export abstract class TeltonikaBaseParser<T> {
     return data.subarray(2).toString();
   }
 
-  public isAVL(data: Buffer) {
+  public isPacket(data: Buffer) {
     const base = data.subarray(0, 4);
     return base.equals(Buffer.from([0x00,0x00,0x00,0x00]));
   }
 
-  abstract parseAVL(data: Buffer): T
+  abstract parsePacket(data: Buffer): T
 }
