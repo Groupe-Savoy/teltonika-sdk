@@ -1,4 +1,10 @@
-import { TeltonikaBasePacket } from "./base";
+import { HEADER_AVL_LENGTH, TeltonikaBasePacket } from "./base";
+
+export const CODEC8E_AVL_TIMESTAMP_LENGTH = 8;
+export const CODEC8E_AVL_PRIORITY_LENGTH = 1;
+export const CODEC8E_AVL_GPS_LENGTH = 15;
+export const CODEC8E_AVL_EVENT_IO_LENGTH = 2;
+export const CODEC8E_AVL_NUMBER_IO_LENGTH = 2;
 
 export interface TeltonikaCodec8eAVLRecord {
   timestamp: Date;
@@ -12,52 +18,51 @@ export interface TeltonikaCodec8eAVLRecord {
     speed: number;
   };
   event: number;
-  io: Record<number, number>;
+  io: Record<number, Buffer>;
 }
 
 export class TeltonikaCodec8eAVLPacket extends TeltonikaBasePacket<TeltonikaCodec8eAVLRecord> {
   parseRecords(raw: Buffer): TeltonikaCodec8eAVLRecord[] {
-    let buffer = raw.subarray(10);
-  
-    const records = Array.from({ length: this.numberOfData1 }).reduce<TeltonikaCodec8eAVLRecord[]>((acc) => {
-      const timestamp = new Date(Number(buffer.readBigUInt64BE(0)));
-      buffer = buffer.subarray(8);
-  
-      const priority = buffer.readUInt8(0);
-      buffer = buffer.subarray(1);
-  
+    let offset = HEADER_AVL_LENGTH;
+    const records: TeltonikaCodec8eAVLRecord[] = [];
+
+    for (let i = 0; i < this.numberOfData1; i++) {
+      const timestamp = new Date(Number(raw.readBigUInt64BE(offset)));
+      offset += CODEC8E_AVL_TIMESTAMP_LENGTH;
+
+      const priority = raw.readUInt8(offset);
+      offset += CODEC8E_AVL_PRIORITY_LENGTH;
+
       const gps = {
-        longitude: buffer.readInt32BE(0),
-        latitude: buffer.readInt32BE(4),
-        altitude: buffer.readInt16BE(8),
-        angle: buffer.readUInt16BE(10),
-        satellites: buffer.readUInt8(12),
-        speed: buffer.readUInt16BE(13),
+        longitude: raw.readInt32BE(offset) / 1e7,
+        latitude: raw.readInt32BE(offset + 4) / 1e7,
+        altitude: raw.readInt16BE(offset + 8),
+        angle: raw.readUInt16BE(offset + 10),
+        satellites: raw.readUInt8(offset + 12),
+        speed: raw.readUInt16BE(offset + 13),
       };
-      buffer = buffer.subarray(15);
-  
-      const event = buffer.readUInt16BE(0);
-      const total = buffer.readUInt16BE(2);
-  
-      buffer = buffer.subarray(4);
-  
-      acc.push({
+      offset += CODEC8E_AVL_GPS_LENGTH;
+
+      const event = raw.readUInt16BE(offset);
+      offset += CODEC8E_AVL_EVENT_IO_LENGTH;
+
+      const total = raw.readUInt16BE(offset);
+      offset += CODEC8E_AVL_NUMBER_IO_LENGTH;
+
+      const start = offset;
+      const io = this.parseIo(raw.subarray(start), total);
+
+      offset += this.calculateIoLength(raw.subarray(start));
+
+      records.push({
         timestamp,
         priority,
         gps,
         event,
-        io: this.parseIo(buffer, total),
+        io,
       });
-  
-      return acc;
-    }, []);
-  
-    return records;
-  }
+    }
 
-  parseIo(data: Buffer, total: number) {
-    const io: Record<number, number> = {};
-    // TODO: Parse io
-    return io;
+    return records;
   }
 }
