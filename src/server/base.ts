@@ -8,6 +8,7 @@ import {
 } from "@/codec";
 import { TeltonikaParserFactory } from "@/parser";
 import type { DataParserRegistry, GprsParserRegistry } from "@/parser";
+import type { PacketRegistry } from "@/packet";
 
 export interface TeltonikaBaseServerOptions<
   DC extends TeltonikaDataCodec = TeltonikaDataCodec,
@@ -26,7 +27,7 @@ export declare interface TeltonikaBaseServer<
   GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
 > {
   on(event: "init", listener: (device: TeltonikaDevice<U>) => void): this;
-  on(event: "data", listener: (device: TeltonikaDevice<U>, data: any) => void): this;
+  on(event: "data", listener: (device: TeltonikaDevice<U>, data: PacketRegistry[DC]) => void): this;
   on(event: "close", listener: (device: TeltonikaDevice<U>) => void): this;
 }
 
