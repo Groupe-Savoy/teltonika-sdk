@@ -12,6 +12,7 @@ export class TeltonikaTCPServer<
       data: DC;
       gprs: GC;
     };
+    timeout?: number;
   }) {
     super(options);
     this.server = createServer(this.onDeviceConnect.bind(this));

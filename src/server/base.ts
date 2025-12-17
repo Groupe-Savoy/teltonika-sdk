@@ -14,6 +14,7 @@ export interface TeltonikaBaseServerOptions<
   DC extends TeltonikaDataCodec = TeltonikaDataCodec,
   GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
 > {
+  timeout?: number,
   codecs?: {
     data: DC;
     gprs: GC;
@@ -28,7 +29,9 @@ export declare interface TeltonikaBaseServer<
 > {
   on(event: "init", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "data", listener: (device: TeltonikaDevice<U>, data: PacketRegistry[DC]) => void): this;
+  on(event: "timeout", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "close", listener: (device: TeltonikaDevice<U>) => void): this;
+  on(event: "error", listener: (device: TeltonikaDevice<U>) => void): this;
 }
 
 export abstract class TeltonikaBaseServer<
@@ -38,6 +41,8 @@ export abstract class TeltonikaBaseServer<
   GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
 > extends EventEmitter {
   protected server!: T;
+
+  protected timeout?: number;
 
   protected devices: TeltonikaDevice<U>[] = [];
 
@@ -57,6 +62,7 @@ export abstract class TeltonikaBaseServer<
     };
 
     this.codecs = codecs;
+    this.timeout = options.timeout;
 
     this.parsers = {
       data: TeltonikaParserFactory.createParser(codecs.data),
@@ -70,12 +76,22 @@ export abstract class TeltonikaBaseServer<
     logger.info(`connect: ${device.uuid}`);
     this.addDevice(device);
 
+    if (this.timeout) {
+      socket.setTimeout(this.timeout);
+    }
+
     socket.on('data', (data) => {
-      this.parsers.data.isImei(data)
-        ? this.onDeviceInit(device, data)
-        : this.onDeviceData(device, data);
+      if (this.parsers.data.isImei(data)) {
+        this.onDeviceInit(device, data);
+      }
+
+      if (this.parsers.data.isPacket(data)) {
+        this.onDeviceData(device, data);
+      }
     });
 
+    socket.on('error', () => this.onDeviceError(device));
+    socket.on('timeout', () => this.onDeviceTimeout(device));
     socket.on('close', () => this.onDeviceClose(device));
   }
 
@@ -87,16 +103,34 @@ export abstract class TeltonikaBaseServer<
   }
 
   protected onDeviceData(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
-    logger.info(`data: ${device.uuid}`)
+    try {
+      const packet = this.parsers.data.parsePacket(data);
 
-    device.socket.write(Buffer.from([0x00, 0x00, 0x00, 0x01]))
-    this.emit('data', device, this.parsers.data.parsePacket(data));
+      device.socket.write(packet.response);
+      logger.info(`data: ${device.uuid}`);
+      this.emit('data', device, packet);
+    } catch(e) {
+      this.onDeviceError(device);
+    }
   }
 
   protected onDeviceClose(device: TeltonikaDevice<U>) {
     logger.info(`close: ${device.uuid}`);
-    this.removeDevice(device);
     this.emit('close', device);
+
+    this.removeDevice(device);
+  }
+
+  protected onDeviceTimeout(device: TeltonikaDevice<U>) {
+    logger.info(`timeout: ${device.uuid}`);
+    this.emit('timeout', device);
+
+    device.socket.destroy();
+  }
+
+  protected onDeviceError(device: TeltonikaDevice<U>) {
+    logger.error(`error: ${device.uuid}`);
+    this.emit('error', device);
   }
 
   protected addDevice(device: TeltonikaDevice<U>) {

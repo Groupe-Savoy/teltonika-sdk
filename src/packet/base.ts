@@ -51,6 +51,10 @@ export abstract class TeltonikaBasePacket<T = any> {
     return this.calculateCrc(this.data);
   }
 
+  get response() {
+    return this.createBuffer(4, Buffer.from([this.numberOfData1]));
+  }
+
   constructor(raw: Buffer) {
     this.raw = raw;
     this.parse(raw);
