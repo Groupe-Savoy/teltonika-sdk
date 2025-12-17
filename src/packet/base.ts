@@ -34,6 +34,19 @@ export abstract class TeltonikaBasePacket<T = any> {
   protected raw!: Buffer;
   public records!: T[];
 
+  get state() {
+    return {
+      preamble: this.preamble,
+      size: this.size,
+      codecId: this.codecId,
+      numberOfData1: this.numberOfData1,
+      numberOfData2: this.numberOfData2,
+      data: this.data,
+      crc: this.crc,
+      raw: this.raw,
+    }
+  }
+
   get calculatedCrc() {
     return this.calculateCrc(this.data);
   }
@@ -46,10 +59,6 @@ export abstract class TeltonikaBasePacket<T = any> {
       throw new Error(
         `CRC-16 validation failed: expected ${this.crc} got ${this.calculatedCrc}`
       );
-    }
-
-    if (this.numberOfData1 !== this.numberOfData2) {
-      throw new Error('Number of data validation failed');
     }
 
     this.records = this.parseRecords(raw);
