@@ -1,4 +1,5 @@
 import type { TeltonikaCodec } from "@/codec";
+import { calculateCrc, createBuffer } from "@/utils";
 
 export const PREAMBLE_LENGTH = 4;
 export const SIZE_LENGTH = 4;
@@ -48,11 +49,11 @@ export abstract class TeltonikaBasePacket<T = any> {
   }
 
   get calculatedCrc() {
-    return this.calculateCrc(this.data);
+    return calculateCrc(this.data);
   }
 
   get response() {
-    return this.createBuffer(4, Buffer.from([this.numberOfData1]));
+    return createBuffer(4, Buffer.from([this.numberOfData1]));
   }
 
   constructor(raw: Buffer) {
@@ -127,30 +128,6 @@ export abstract class TeltonikaBasePacket<T = any> {
     this.crc = raw.readUInt32BE(raw.length - CRC_OFFSET_FROM_END);
   }
 
-  /**
-   * Create a fixed-size buffer and right-align the provided data.
-   * Commonly used for CRC comparison or protocol-aligned values.
-   *
-   * @param {number} size - Desired buffer size
-   * @param {Buffer} data - Source data buffer
-   * @returns Right-aligned buffer with zero-padding
-   *
-   * @example
-   * ```ts
-   * const buf = packet.createBuffer(4, Buffer.from("2994", "hex"));
-   * console.log(buf);
-   * // <Buffer 00 00 29 94>
-   * ```
-   */
-  public createBuffer(size: number, data: Buffer) {
-    const buf = Buffer.alloc(size, 0x00);
-    const value = Buffer.from(data);
-
-    value.copy(buf, size - value.length);
-
-    return buf;
-  }
-
   private readUIntByLength(
     data: Buffer,
     offset: number,
@@ -163,52 +140,6 @@ export abstract class TeltonikaBasePacket<T = any> {
       default:
         throw new Error(`Unsupported integer length: ${length}`);
     }
-  }
-
-  /**
-   * Calculate CRC-16 (IBM / ANSI) checksum for Teltonika packets.
-   * CRC is calculated over the "data field":
-   * from Codec ID (byte 8) up to Number of Data 2.
-   *
-   * @param {Buffer} data - Buffer containing the data field
-   * @returns Calculated CRC-16 value
-   *
-   * @example
-   * ```ts
-   * const data = Buffer.from(
-   *   "8E01" +     // Codec ID + Number of Data 1
-   *   "0000016B4F831C6801" +
-   *   "000000000000000000000000" +
-   *   "00010005000100010100010011001d" +
-   *   "00010010015e2c88" +
-   *   "0002000b000000003544c87a000e000000001dd7e06a" +
-   *   "01",        // Number of Data 2
-   *   "hex"
-   * );
-   *
-   * const crc = packet.calculateCrc(data);
-   * console.log(crc.toString(16)); // "2994"
-   * ```
-   */
-  public calculateCrc(data: Buffer) {
-    let crc = 0;
-
-    data.forEach((byte) => {
-      crc = crc ^ byte;
-      let bitNumber = 0;
-
-      do {
-        const carry = crc & 1;
-        crc = crc >>> 1;
-
-        if (carry === 1) {
-          crc = crc ^ 0xa001;
-        }
-        bitNumber += 1;
-      } while (bitNumber !== 8);
-    });
-
-    return crc;
   }
 
   /**

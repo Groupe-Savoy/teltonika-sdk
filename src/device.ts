@@ -1,5 +1,8 @@
 import type { Socket } from 'node:net';
 import { v4 as uuid } from 'uuid';
+import { createBuffer } from './utils';
+import type { TeltonikaGPRSCodec } from './codec';
+import { TeltonikaCommandFactory } from './command';
 
 export class TeltonikaDevice<T extends Socket> {
   public uuid: string;
@@ -14,20 +17,17 @@ export class TeltonikaDevice<T extends Socket> {
 
   constructor({ socket }: { socket: T }) {
     this.uuid = uuid();
-    this.socket = socket
+    this.socket = socket;
   }
 
   init(imei: string) {
     this.imei = imei;
-    this.socket.write(this.createBuffer(1, [0x01]))
+    this.socket.write(createBuffer(1, Buffer.from([0x01])))
   }
 
-  public createBuffer(size: number, data: any) {
-    const buf = Buffer.alloc(size, 0x00);
-    const value = Buffer.from(data);
+  sendCommand(codec:  TeltonikaGPRSCodec, cmd: string) {
+    const command = TeltonikaCommandFactory.createCommand(codec, cmd);
 
-    value.copy(buf, size - value.length);
-
-    return buf;
+    this.socket.write(command.toBuffer());
   }
 }

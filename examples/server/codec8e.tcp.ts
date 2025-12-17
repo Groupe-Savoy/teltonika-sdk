@@ -10,6 +10,11 @@ const server = new TeltonikaTCPServer({
 
 server.on('data', (device, data) => {
   console.log(device.imei, data.records);
+  device.sendCommand(TeltonikaGPRSCodec.Codec12, 'getver')
+});
+
+server.on('response', (device, data) => {
+  console.log(device.imei, data.records)
 });
 
 server.listen(4041, '0.0.0.0')

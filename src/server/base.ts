@@ -8,7 +8,7 @@ import {
 } from "@/codec";
 import { TeltonikaParserFactory } from "@/parser";
 import type { DataParserRegistry, GprsParserRegistry } from "@/parser";
-import type { PacketRegistry } from "@/packet";
+import type { PacketDataRegistry, PacketResponseRegistry } from "@/packet";
 
 export interface TeltonikaBaseServerOptions<
   DC extends TeltonikaDataCodec = TeltonikaDataCodec,
@@ -28,7 +28,8 @@ export declare interface TeltonikaBaseServer<
   GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
 > {
   on(event: "init", listener: (device: TeltonikaDevice<U>) => void): this;
-  on(event: "data", listener: (device: TeltonikaDevice<U>, data: PacketRegistry[DC]) => void): this;
+  on(event: "data", listener: (device: TeltonikaDevice<U>, data: PacketDataRegistry[DC]) => void): this;
+  on(event: "response", listener: (device: TeltonikaDevice<U>, data: PacketResponseRegistry[GC]) => void): this;
   on(event: "timeout", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "close", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "error", listener: (device: TeltonikaDevice<U>) => void): this;
@@ -81,12 +82,20 @@ export abstract class TeltonikaBaseServer<
     }
 
     socket.on('data', (data) => {
-      if (this.parsers.data.isImei(data)) {
+      const isImei = this.parsers.data.isImei(data);
+      const isData = this.parsers.data.isPacket(data);
+      const isResponse = this.parsers.gprs.isPacket(data);
+
+      if (isImei) {
         this.onDeviceInit(device, data);
       }
 
-      if (this.parsers.data.isPacket(data)) {
+      if (isData && !isResponse) {
         this.onDeviceData(device, data);
+      }
+
+      if (isResponse) {
+        this.onDeviceResponse(device, data);
       }
     });
 
@@ -109,7 +118,18 @@ export abstract class TeltonikaBaseServer<
       device.socket.write(packet.response);
       logger.info(`data: ${device.uuid}`);
       this.emit('data', device, packet);
-    } catch(e) {
+    } catch {
+      this.onDeviceError(device);
+    }
+  }
+
+  protected onDeviceResponse(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+    try {
+      const packet = this.parsers.gprs.parsePacket(data);
+
+      logger.info(`response: ${device.uuid}`);
+      this.emit('response', device, packet);
+    } catch {
       this.onDeviceError(device);
     }
   }
@@ -133,12 +153,26 @@ export abstract class TeltonikaBaseServer<
     this.emit('error', device);
   }
 
+  public getDevice(imei: string) {
+    return this.devices.find((d) => d.imei === imei);
+  }
+
   protected addDevice(device: TeltonikaDevice<U>) {
     this.devices.push(device);
   }
 
   protected removeDevice(device: TeltonikaDevice<U>) {
     this.devices = this.devices.filter((d) => d.uuid !== device.uuid);
+  }
+
+  public sendCommand(imei: string, cmd: string) {
+    const device = this.getDevice(imei);
+
+    if (!device) {
+      return;
+    }
+
+    device.sendCommand(this.codecs.gprs, cmd);
   }
 
   abstract listen(port: number, host?: string): void;
