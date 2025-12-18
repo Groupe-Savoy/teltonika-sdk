@@ -11,6 +11,12 @@ export class TeltonikaDevice<T extends Socket> {
 
   public socket: T;
 
+  public buffer: Buffer = Buffer.from([]);
+
+  get isWaitingPacket() {
+    return this.buffer.length !== 0;
+  }
+
   get isInit() {
     return this.imei !== '';
   }
@@ -29,5 +35,17 @@ export class TeltonikaDevice<T extends Socket> {
     const command = TeltonikaCommandFactory.createCommand(codec, cmd);
 
     this.socket.write(command.toBuffer());
+  }
+
+  bufferPacket(data: Buffer) {
+    this.buffer = Buffer.concat([this.buffer, data]);
+  }
+
+  clearBuffer() {
+    this.buffer = Buffer.from([]);
+  }
+
+  close() {
+    this.socket.destroy();
   }
 }

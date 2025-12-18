@@ -13,8 +13,16 @@ server.on('data', (device, data) => {
   device.sendCommand(TeltonikaGPRSCodec.Codec12, 'getver')
 });
 
+server.on('buffer', (device, data) => {
+  console.log(device.imei, data.toString('hex'))
+});
+
 server.on('response', (device, data) => {
-  console.log(device.imei, data.records)
+  console.log(device.imei, data.records);
+});
+
+server.on('error', (device, error) => {
+  console.log('error', device.imei, error)
 });
 
 server.listen(4041, '0.0.0.0')

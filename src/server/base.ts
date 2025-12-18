@@ -29,10 +29,11 @@ export declare interface TeltonikaBaseServer<
 > {
   on(event: "init", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "data", listener: (device: TeltonikaDevice<U>, data: PacketDataRegistry[DC]) => void): this;
+  on(event: "buffer", listener: (device: TeltonikaDevice<U>, data: Buffer) => void): this;
   on(event: "response", listener: (device: TeltonikaDevice<U>, data: PacketResponseRegistry[GC]) => void): this;
   on(event: "timeout", listener: (device: TeltonikaDevice<U>) => void): this;
   on(event: "close", listener: (device: TeltonikaDevice<U>) => void): this;
-  on(event: "error", listener: (device: TeltonikaDevice<U>) => void): this;
+  on(event: "error", listener: (device: TeltonikaDevice<U>, error?: Error) => void): this;
 }
 
 export abstract class TeltonikaBaseServer<
@@ -84,10 +85,16 @@ export abstract class TeltonikaBaseServer<
     socket.on('data', (data) => {
       const isImei = this.parsers.data.isImei(data);
       const isData = this.parsers.data.isPacket(data);
+      const isComplet = this.parsers.data.isCompletPacket(data);
       const isResponse = this.parsers.gprs.isPacket(data);
 
       if (isImei) {
         this.onDeviceInit(device, data);
+      }
+
+      if ((isData && !isResponse && !isComplet) || device.isWaitingPacket) {
+        this.onDeviceBuffer(device, data);
+        return;
       }
 
       if (isData && !isResponse) {
@@ -111,6 +118,19 @@ export abstract class TeltonikaBaseServer<
     this.emit('init', device);
   }
 
+  protected onDeviceBuffer(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+    logger.info(`buffer: ${device.uuid}`);
+    device.bufferPacket(data);
+    this.emit('buffer', device, data);
+
+    if (!this.parsers.data.isCompletPacket(device.buffer)) {
+      return;  
+    }
+
+    this.onDeviceData(device, device.buffer);
+    device.clearBuffer();
+  }
+
   protected onDeviceData(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
     try {
       const packet = this.parsers.data.parsePacket(data);
@@ -118,8 +138,8 @@ export abstract class TeltonikaBaseServer<
       device.socket.write(packet.response);
       logger.info(`data: ${device.uuid}`);
       this.emit('data', device, packet);
-    } catch {
-      this.onDeviceError(device);
+    } catch(error) {
+      this.onDeviceError(device, error as Error);
     }
   }
 
@@ -129,8 +149,8 @@ export abstract class TeltonikaBaseServer<
 
       logger.info(`response: ${device.uuid}`);
       this.emit('response', device, packet);
-    } catch {
-      this.onDeviceError(device);
+    } catch(error) {
+      this.onDeviceError(device, error as Error);
     }
   }
 
@@ -148,9 +168,9 @@ export abstract class TeltonikaBaseServer<
     device.socket.destroy();
   }
 
-  protected onDeviceError(device: TeltonikaDevice<U>) {
+  protected onDeviceError(device: TeltonikaDevice<U>, error?: Error) {
     logger.error(`error: ${device.uuid}`);
-    this.emit('error', device);
+    this.emit('error', device, error);
   }
 
   public getDevice(imei: string) {
@@ -175,5 +195,14 @@ export abstract class TeltonikaBaseServer<
     device.sendCommand(this.codecs.gprs, cmd);
   }
 
+  public closeAllDevices() {
+    this.devices.forEach((device) => {
+      device.close();
+      this.removeDevice(device);
+    });
+  }
+
   abstract listen(port: number, host?: string): void;
+
+  abstract close(): void;
 }

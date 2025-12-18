@@ -18,5 +18,16 @@ export abstract class TeltonikaBaseParser<T extends TeltonikaBasePacket> {
     return base.equals(Buffer.from([0x00,0x00,0x00,0x00]));
   }
 
+  public isCompletPacket(data: Buffer) {
+    try {      
+      const size = data.subarray(4, 8).readUInt32BE(0);
+      const dataSize = data.subarray(8, data.length - 4).length;
+      
+      return size === dataSize;
+    } catch {
+      return false;
+    }
+  }
+
   abstract parsePacket(data: Buffer): T
 }

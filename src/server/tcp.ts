@@ -21,4 +21,9 @@ export class TeltonikaTCPServer<
   listen(port: number, host: string): void {
     this.server.listen(port, host, () => logger.info(`tcp server listen: ${host}:${port}`));
   }
+
+  close() {
+    this.server.close();
+    this.closeAllDevices();
+  }
 }
