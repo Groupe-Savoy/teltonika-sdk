@@ -28,6 +28,8 @@
     "dev": "tsx watch",
     "dev:parser:codec8": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec8.ts",
     "dev:parser:codec8e": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec8e.ts",
+    "dev:parser:codec12": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec12.ts",
+    "dev:parser:codec14": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec14.ts",
     "dev:parser:codec16": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec16.ts",
     "dev:server:codec8e:tcp": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/server/codec8e.tcp.ts",
     "dev:server:codec12:tcp": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/server/codec12.tcp.ts",
