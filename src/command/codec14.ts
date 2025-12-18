@@ -1,6 +1,6 @@
-import { TeltonikaGPRSCodec } from "@/codec";
-import { TeltonikaBaseCommand } from "./base";
-import { createBuffer, imeiToBuffer } from "@/utils";
+import { TeltonikaGPRSCodec } from '@/codec';
+import { TeltonikaBaseCommand } from './base';
+import { createBuffer, imeiToBuffer } from '@/utils';
 
 export class TeltonikaCodec14Command extends TeltonikaBaseCommand {
   constructor(cmd: string, imei: string = '') {
@@ -10,7 +10,7 @@ export class TeltonikaCodec14Command extends TeltonikaBaseCommand {
       numberOfCmd: Buffer.from([0x01]),
       cmd,
       imei: imeiToBuffer(imei),
-    })
+    });
   }
 
   getContent() {

@@ -1,5 +1,5 @@
-import { HEADER_AVL_LENGTH, TeltonikaBasePacket, TeltonikaIoGroup } from "./base";
-import type { TeltonikaCodec8AVLRecord } from "./codec8";
+import { HEADER_AVL_LENGTH, TeltonikaBasePacket, TeltonikaIoGroup } from './base';
+import type { TeltonikaCodec8AVLRecord } from './codec8';
 
 export const CODEC16_AVL_TIMESTAMP_LENGTH = 8;
 export const CODEC16_AVL_PRIORITY_LENGTH = 1;
@@ -18,7 +18,7 @@ export const CODEC16_IO_GROUPS = [
 export const CODEC16_IO_LAYOUT = {
   countLength: 1,
   idLength: 2,
-}
+};
 
 export enum TeltonikaCodec16IoType {
   OnExit = 0,

@@ -1,5 +1,5 @@
-import { TeltonikaGPRSCodec } from "@/codec";
-import { TeltonikaBaseCommand } from "./base";
+import { TeltonikaGPRSCodec } from '@/codec';
+import { TeltonikaBaseCommand } from './base';
 
 export class TeltonikaCodec12Command extends TeltonikaBaseCommand {
   constructor(cmd: string) {
@@ -8,7 +8,7 @@ export class TeltonikaCodec12Command extends TeltonikaBaseCommand {
       type: Buffer.from([0x05]), 
       numberOfCmd: Buffer.from([0x01]),
       cmd,
-    })
+    });
   }
 
   getContent() {

@@ -7,6 +7,6 @@ describe('TeltonikaCodec14Command', () => {
     const result = '00000000000000160E01050000000E0352093081452251676574766572010000D2C1';
 
     expect(cmd.toString()).toEqual(result);
-    expect(cmd.toBuffer()).toStrictEqual(Buffer.from(result, 'hex'))
+    expect(cmd.toBuffer()).toStrictEqual(Buffer.from(result, 'hex'));
   });
 });

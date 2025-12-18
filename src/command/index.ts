@@ -1,6 +1,6 @@
-import { TeltonikaGPRSCodec } from "@/codec";
-import { TeltonikaCodec12Command } from "./codec12";
-import { TeltonikaCodec14Command } from "./codec14";
+import { TeltonikaGPRSCodec } from '@/codec';
+import { TeltonikaCodec12Command } from './codec12';
+import { TeltonikaCodec14Command } from './codec14';
 
 export interface CommandRegistry {
   [TeltonikaGPRSCodec.Codec12]: TeltonikaCodec12Command;

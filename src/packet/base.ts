@@ -1,5 +1,5 @@
-import type { TeltonikaCodec } from "@/codec";
-import { calculateCrc, createBuffer } from "@/utils";
+import type { TeltonikaCodec } from '@/codec';
+import { calculateCrc, createBuffer } from '@/utils';
 
 export const PREAMBLE_LENGTH = 4;
 export const SIZE_LENGTH = 4;
@@ -25,7 +25,7 @@ export type TeltonikaIoLayout = {
   idLength?: number;
 }
 
-export abstract class TeltonikaBasePacket<T = any> {
+export abstract class TeltonikaBasePacket<T = unknown> {
   protected preamble!: Buffer;
   protected size!: number;
   protected codecId!: TeltonikaCodec;
@@ -46,7 +46,7 @@ export abstract class TeltonikaBasePacket<T = any> {
       data: this.data,
       crc: this.crc,
       raw: this.raw,
-    }
+    };
   }
 
   get calculatedCrc() {

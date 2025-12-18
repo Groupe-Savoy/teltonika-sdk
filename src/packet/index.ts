@@ -1,9 +1,9 @@
-import type { TeltonikaDataCodec, TeltonikaGPRSCodec } from "..";
-import type { TeltonikaCodec12ResponsePacket } from "./codec12";
-import type { TeltonikaCodec14ResponsePacket } from "./codec14";
-import type { TeltonikaCodec16AVLPacket } from "./codec16";
-import type { TeltonikaCodec8AVLPacket } from "./codec8";
-import type { TeltonikaCodec8eAVLPacket } from "./codec8e";
+import type { TeltonikaDataCodec, TeltonikaGPRSCodec } from '..';
+import type { TeltonikaCodec12ResponsePacket } from './codec12';
+import type { TeltonikaCodec14ResponsePacket } from './codec14';
+import type { TeltonikaCodec16AVLPacket } from './codec16';
+import type { TeltonikaCodec8AVLPacket } from './codec8';
+import type { TeltonikaCodec8eAVLPacket } from './codec8e';
 
 export interface PacketDataRegistry {
   [TeltonikaDataCodec.Codec8]: TeltonikaCodec8AVLPacket;

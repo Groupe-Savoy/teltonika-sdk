@@ -17,11 +17,11 @@ server.on('init', (device) => {
 });
 
 server.on('response', (device, data) => {
-  console.log(device.imei, data.records)
-})
-
-server.on('error', (device, error) => {
-  console.log('error', device.imei, error)
+  console.log(device.imei, data.records);
 });
 
-server.listen(4041, '0.0.0.0')
+server.on('error', (device, error) => {
+  console.log('error', device.imei, error);
+});
+
+server.listen(4041, '0.0.0.0');

@@ -44,11 +44,11 @@ export function createBuffer(size: number, data: Buffer) {
  */
 export function imeiToBuffer(imei: string) {
   if (!/^\d+$/.test(imei)) {
-    throw new TypeError("IMEI must contain digits only");
+    throw new TypeError('IMEI must contain digits only');
   }
 
   if (imei.length % 2 !== 0) {
-    imei = "0" + imei;
+    imei = '0' + imei;
   }
 
   return Buffer.from(imei, 'hex');

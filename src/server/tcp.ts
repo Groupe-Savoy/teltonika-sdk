@@ -1,7 +1,7 @@
-import { logger } from "@/logger";
-import { TeltonikaBaseServer } from "./base";
+import { logger } from '@/logger';
+import { TeltonikaBaseServer } from './base';
 import { Server, createServer, Socket } from 'node:net';
-import type { TeltonikaDataCodec, TeltonikaGPRSCodec } from "@/codec";
+import type { TeltonikaDataCodec, TeltonikaGPRSCodec } from '@/codec';
 
 export class TeltonikaTCPServer<
   DC extends TeltonikaDataCodec, 

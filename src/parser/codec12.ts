@@ -1,6 +1,6 @@
-import { type TeltonikaCodec, TeltonikaGPRSCodec } from "@/codec";
-import { TeltonikaBaseParser } from "./base";
-import { TeltonikaCodec12ResponsePacket } from "@/packet/codec12";
+import { type TeltonikaCodec, TeltonikaGPRSCodec } from '@/codec';
+import { TeltonikaBaseParser } from './base';
+import { TeltonikaCodec12ResponsePacket } from '@/packet/codec12';
 
 export class TeltonikaCodec12Parser extends TeltonikaBaseParser<TeltonikaCodec12ResponsePacket> {
   static codec: TeltonikaCodec = TeltonikaGPRSCodec.Codec12;

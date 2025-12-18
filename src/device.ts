@@ -31,7 +31,7 @@ export class TeltonikaDevice<T extends Socket> {
   init(imei: string, gprs: TeltonikaGPRSCodec) {
     this.imei = imei;
     this.gprs = gprs;
-    this.socket.write(createBuffer(1, Buffer.from([0x01])))
+    this.socket.write(createBuffer(1, Buffer.from([0x01])));
   }
 
   sendCommand(cmd: string, codec?:  TeltonikaGPRSCodec) {

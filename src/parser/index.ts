@@ -2,13 +2,13 @@ import {
   type TeltonikaCodec,
   TeltonikaDataCodec,
   TeltonikaGPRSCodec
-} from "@/codec";
+} from '@/codec';
 
-import { TeltonikaCodec8Parser } from "./codec8";
-import { TeltonikaCodec8eParser } from "./codec8e";
-import { TeltonikaCodec12Parser } from "./codec12";
-import { TeltonikaCodec16Parser } from "./codec16";
-import { TeltonikaCodec14Parser } from "./codec14";
+import { TeltonikaCodec8Parser } from './codec8';
+import { TeltonikaCodec8eParser } from './codec8e';
+import { TeltonikaCodec12Parser } from './codec12';
+import { TeltonikaCodec16Parser } from './codec16';
+import { TeltonikaCodec14Parser } from './codec14';
 
 export interface DataParserRegistry {
   [TeltonikaDataCodec.Codec8]: TeltonikaCodec8Parser;

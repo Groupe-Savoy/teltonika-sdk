@@ -13,11 +13,11 @@ server.on('data', (device, data) => {
 });
 
 server.on('buffer', (device, data) => {
-  console.log(device.imei, data.toString('hex'))
+  console.log(device.imei, data.toString('hex'));
 });
 
 server.on('error', (device, error) => {
-  console.log('error', device.imei, error)
+  console.log('error', device.imei, error);
 });
 
-server.listen(4041, '0.0.0.0')
+server.listen(4041, '0.0.0.0');

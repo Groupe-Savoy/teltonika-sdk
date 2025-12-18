@@ -1,4 +1,4 @@
-import { HEADER_AVL_LENGTH, TeltonikaBasePacket, TeltonikaIoGroup, type TeltonikaIo } from "./base";
+import { HEADER_AVL_LENGTH, TeltonikaBasePacket, TeltonikaIoGroup, type TeltonikaIo } from './base';
 
 export const CODEC8_AVL_TIMESTAMP_LENGTH = 8;
 export const CODEC8_AVL_PRIORITY_LENGTH = 1;
@@ -16,7 +16,7 @@ export const CODEC8_IO_GROUPS = [
 export const CODEC8_IO_LAYOUT = {
   countLength: 1,
   idLength: 1,
-}
+};
 
 export type TeltonikaCodec8AVLRecord = {
   timestamp: Date;

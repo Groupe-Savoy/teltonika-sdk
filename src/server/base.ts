@@ -1,14 +1,14 @@
-import { logger } from "@/logger";
-import { EventEmitter } from "node:events";
-import type { Socket } from "node:net";
-import { TeltonikaDevice } from "@/device";
+import { logger } from '@/logger';
+import { EventEmitter } from 'node:events';
+import type { Socket } from 'node:net';
+import { TeltonikaDevice } from '@/device';
 import {
   TeltonikaDataCodec,
   TeltonikaGPRSCodec,
-} from "@/codec";
-import { TeltonikaParserFactory } from "@/parser";
-import type { DataParserRegistry, GprsParserRegistry } from "@/parser";
-import type { PacketDataRegistry, PacketResponseRegistry } from "@/packet";
+} from '@/codec';
+import { TeltonikaParserFactory } from '@/parser';
+import type { DataParserRegistry, GprsParserRegistry } from '@/parser';
+import type { PacketDataRegistry, PacketResponseRegistry } from '@/packet';
 
 export interface TeltonikaBaseServerOptions<
   DC extends TeltonikaDataCodec = TeltonikaDataCodec,
@@ -21,27 +21,20 @@ export interface TeltonikaBaseServerOptions<
   };
 }
 
-export declare interface TeltonikaBaseServer<
-  T,
-  U extends Socket,
-  DC extends TeltonikaDataCodec = TeltonikaDataCodec,
-  GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
-> {
-  on(event: "init", listener: (device: TeltonikaDevice<U>) => void): this;
-  on(event: "data", listener: (device: TeltonikaDevice<U>, data: PacketDataRegistry[DC]) => void): this;
-  on(event: "buffer", listener: (device: TeltonikaDevice<U>, data: Buffer) => void): this;
-  on(event: "response", listener: (device: TeltonikaDevice<U>, data: PacketResponseRegistry[GC]) => void): this;
-  on(event: "timeout", listener: (device: TeltonikaDevice<U>) => void): this;
-  on(event: "close", listener: (device: TeltonikaDevice<U>) => void): this;
-  on(event: "error", listener: (device: TeltonikaDevice<U>, error?: Error) => void): this;
-}
-
 export abstract class TeltonikaBaseServer<
   T,
   U extends Socket,
   DC extends TeltonikaDataCodec = TeltonikaDataCodec,
   GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
-> extends EventEmitter {
+> extends EventEmitter<{
+  init: [device: TeltonikaDevice<U>],
+  data: [device: TeltonikaDevice<U>, data: PacketDataRegistry[DC]],
+  buffer: [device: TeltonikaDevice<U>, data: Buffer],
+  response: [device: TeltonikaDevice<U>, data: PacketResponseRegistry[GC]],
+  timeout: [device: TeltonikaDevice<U>],
+  close: [device: TeltonikaDevice<U>],
+  error: [device: TeltonikaDevice<U>, error?: Error]
+}> {
   protected server!: T;
 
   protected timeout?: number;
@@ -137,7 +130,7 @@ export abstract class TeltonikaBaseServer<
 
       device.socket.write(packet.response);
       logger.info(`data: ${device.uuid}`);
-      this.emit('data', device, packet);
+      this.emit('data', device, packet as PacketDataRegistry[DC]);
     } catch(error) {
       this.onDeviceError(device, error as Error);
     }
@@ -148,7 +141,7 @@ export abstract class TeltonikaBaseServer<
       const packet = this.parsers.gprs.parsePacket(data);
 
       logger.info(`response: ${device.uuid}`);
-      this.emit('response', device, packet);
+      this.emit('response', device, packet as PacketResponseRegistry[GC]);
     } catch(error) {
       this.onDeviceError(device, error as Error);
     }

@@ -1,5 +1,5 @@
 import { inspect } from 'util';
-import { calculateCrc, createBuffer } from "@/utils";
+import { calculateCrc, createBuffer } from '@/utils';
 
 export type TeltonikaBaseCommandConstructor = {
   preamble?: Buffer;
@@ -21,7 +21,7 @@ export abstract class TeltonikaBaseCommand {
   protected imei?: Buffer;
 
   get dataSize() {
-    return createBuffer(4, Buffer.from([this.content.length]))
+    return createBuffer(4, Buffer.from([this.content.length]));
   }
 
   get crc() {
