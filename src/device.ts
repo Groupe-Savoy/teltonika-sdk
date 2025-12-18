@@ -32,7 +32,7 @@ export class TeltonikaDevice<T extends Socket> {
   }
 
   sendCommand(codec:  TeltonikaGPRSCodec, cmd: string) {
-    const command = TeltonikaCommandFactory.createCommand(codec, cmd);
+    const command = TeltonikaCommandFactory.createCommand(codec, cmd, this.imei);
 
     this.socket.write(command.toBuffer());
   }

@@ -1,3 +1,4 @@
+import { inspect } from 'util';
 import { calculateCrc, createBuffer } from "@/utils";
 
 export type TeltonikaBaseCommandConstructor = {
@@ -6,6 +7,7 @@ export type TeltonikaBaseCommandConstructor = {
   codecId: Buffer;
   numberOfCmd: Buffer;
   cmd: string;
+  imei?: Buffer;
 }
 
 export abstract class TeltonikaBaseCommand {
@@ -16,6 +18,7 @@ export abstract class TeltonikaBaseCommand {
   protected cmdSize!: Buffer;
   protected content!: Buffer;
   protected cmd!: Buffer;
+  protected imei?: Buffer;
 
   get dataSize() {
     return createBuffer(4, Buffer.from([this.content.length]))
@@ -31,9 +34,18 @@ export abstract class TeltonikaBaseCommand {
     this.numberOfCmd = data.numberOfCmd;
     this.type = data.type;
     this.cmd = Buffer.from(data.cmd);
+    this.imei = data.imei;
 
     this.cmdSize = createBuffer(4, Buffer.from([this.cmd.length]));
     this.content = this.getContent();
+  }
+
+  [inspect.custom]() {
+    return this.toBuffer();
+  }
+
+  public toString() {
+    return this.toBuffer().toString('hex').toUpperCase();
   }
 
   abstract getContent(): Buffer;
