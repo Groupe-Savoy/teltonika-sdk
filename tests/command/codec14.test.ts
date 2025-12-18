@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TeltonikaCodec14Command } from '../../src/command/codec14';
+import { TeltonikaCodec14Command } from '../../src';
 
 describe('TeltonikaCodec14Command', () => {
   it('should create a getver command (wiki example 1)', () => {

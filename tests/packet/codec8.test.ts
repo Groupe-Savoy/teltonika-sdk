@@ -1,6 +1,5 @@
 import { describe, it, assert, expect } from 'vitest';
-import { TeltonikaCodec8AVLPacket } from '../../src/packet/codec8';
-import { TeltonikaDataCodec } from '../../src/codec';
+import { TeltonikaCodec8AVLPacket, TeltonikaDataCodec } from '../../src/';
 
 describe('TeltonikaCodec8AVLPacket', () => {
   it('should throw an error if crc 16 is not matching', () => {
