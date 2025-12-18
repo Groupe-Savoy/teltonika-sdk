@@ -35,18 +35,24 @@
     "dev:server:codec12:tcp": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/server/codec12.tcp.ts",
     "test": "vitest",
     "coverage": "vitest run --coverage",
+    "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/debug": "^4.1.12",
     "@types/node": "^24.10.1",
     "@vitest/coverage-v8": "4.0.15",
     "bumpp": "^10.3.1",
     "cross-env": "^10.1.0",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
+    "jiti": "^2.6.1",
     "tsdown": "^0.16.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.0",
     "vitest": "^4.0.9"
   },
   "dependencies": {
