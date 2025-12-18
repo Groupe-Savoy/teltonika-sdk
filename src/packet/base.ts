@@ -8,6 +8,7 @@ export const NUMBER_OF_DATA_LENGTH = 1;
 export const CRC_OFFSET_FROM_END = 4;
 export const HEADER_LENGTH = PREAMBLE_LENGTH + SIZE_LENGTH;
 export const HEADER_AVL_LENGTH = HEADER_LENGTH + CODEC_ID_LENGTH + NUMBER_OF_DATA_LENGTH;
+export const HEADER_RESPONSE_LENGTH = HEADER_AVL_LENGTH;
 
 export enum TeltonikaIoGroup {
   N1 = 1,

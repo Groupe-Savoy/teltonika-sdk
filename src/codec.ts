@@ -6,7 +6,6 @@ export enum TeltonikaDataCodec {
 
 export enum TeltonikaGPRSCodec {
   Codec12 = 0x0C,
-  Codec13 = 0x0D,
   Codec14 = 0x0E
 }
 

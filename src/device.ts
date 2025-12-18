@@ -7,7 +7,9 @@ import { TeltonikaCommandFactory } from './command';
 export class TeltonikaDevice<T extends Socket> {
   public uuid: string;
 
-  public imei: string = '';
+  public imei?: string;
+
+  public gprs?: TeltonikaGPRSCodec;
 
   public socket: T;
 
@@ -18,7 +20,7 @@ export class TeltonikaDevice<T extends Socket> {
   }
 
   get isInit() {
-    return this.imei !== '';
+    return this.imei !== undefined;
   }
 
   constructor({ socket }: { socket: T }) {
@@ -26,13 +28,14 @@ export class TeltonikaDevice<T extends Socket> {
     this.socket = socket;
   }
 
-  init(imei: string) {
+  init(imei: string, gprs: TeltonikaGPRSCodec) {
     this.imei = imei;
+    this.gprs = gprs;
     this.socket.write(createBuffer(1, Buffer.from([0x01])))
   }
 
-  sendCommand(codec:  TeltonikaGPRSCodec, cmd: string) {
-    const command = TeltonikaCommandFactory.createCommand(codec, cmd, this.imei);
+  sendCommand(cmd: string, codec?:  TeltonikaGPRSCodec) {
+    const command = TeltonikaCommandFactory.createCommand(codec || this.gprs!, cmd, this.imei);
 
     this.socket.write(command.toBuffer());
   }

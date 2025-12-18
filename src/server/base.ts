@@ -113,7 +113,7 @@ export abstract class TeltonikaBaseServer<
 
   protected onDeviceInit(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
     logger.info(`init: ${device.uuid}`);
-    device.init(data.toString());
+    device.init(this.parsers.data.parseImei(data), this.codecs.gprs);
 
     this.emit('init', device);
   }
@@ -192,7 +192,7 @@ export abstract class TeltonikaBaseServer<
       return;
     }
 
-    device.sendCommand(this.codecs.gprs, cmd);
+    device.sendCommand(cmd, this.codecs.gprs);
   }
 
   public closeAllDevices() {
