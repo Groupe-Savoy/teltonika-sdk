@@ -39,8 +39,11 @@ jobs:
     needs: [test, lint]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-node@v3
         with:
           node-version: '22.x'
           registry-url: 'https://registry.npmjs.org'
@@ -58,8 +61,8 @@ jobs:
     needs: [build]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
       - run: npm install -g @geut/chan
       - run: echo "NPM_VERSION=`echo $(node -p "require('./package.json').version")`" >> $GITHUB_ENV
       - run: chan gh-release ${{ env.NPM_VERSION }}
