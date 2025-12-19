@@ -8,5 +8,3 @@ if (!version) {
 execSync(`chan release ${version}`);
 execSync('git add .');
 execSync(`npm version ${version} --force`);
-execSync('git push origin');
-execSync('git push origin --tags');
