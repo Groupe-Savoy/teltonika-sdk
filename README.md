@@ -1,6 +1,29 @@
 # Teltonika SDK for TypeScript
 
-Teltonika SDK is a developer-friendly package for interacting with Teltonika devices. Designed with TypeScript, this SDK provides an easy and type-safe way to manage GPS tracking, IoT integrations, and telemetry data.
+The **Teltonika SDK** is a developer-friendly TypeScript package for interacting with Teltonika devices. It provides a type-safe and flexible way to manage GPS tracking, IoT integrations, and telemetry data.
+
+The SDK can be used for several use cases:
+
+* **Server**: A fully implemented server for communicating with Teltonika telematics devices
+* **Parser**: Parsers for the different Teltonika codecs
+* **Command**: Utilities to easily create GPRS commands
+
+## Supported Codecs
+
+The following table shows the currently implemented and tested codecs:
+
+| Codec        | Server | Parser | Command |
+| ------------ | ------ | ------ | ------- |
+| **Codec 8**  | ⚠️     | ✅      | —       |
+| **Codec 8e** | ✅      | ✅      | —       |
+| **Codec 16** | ⚠️     | ✅      | —       |
+| **Codec 12** | ✅      | ✅      | ✅       |
+| **Codec 13** | ❌      | ❌      | ❌       |
+| **Codec 14** | ⚠️     | ✅      | ✅       |
+
+> ✅ Implemented and tested in real conditions  
+> ⚠️ Implemented but not tested in real conditions  
+> ❌ Not implemented yet  
 
 ## Installation
 
@@ -12,12 +35,19 @@ npm install @groupe-savoy/teltonika-sdk
 
 ## Usage
 
-### Setting Up a TCP Server
+Below is a basic example showing how to use the SDK.
+For more advanced examples, see the [examples](./examples/) directory.
 
-Here's an example for setting up a Teltonika TCP server:
+### Setting Up a Basic TCP Server to Collect Data
 
-```typescript
-import { TeltonikaTCPServer, TeltonikaDataCodec, TeltonikaGPRSCodec } from '@groupe-savoy/teltonika-sdk';
+Here’s an example of how to set up a Teltonika TCP server:
+
+```ts
+import {
+  TeltonikaTCPServer,
+  TeltonikaDataCodec,
+  TeltonikaGPRSCodec,
+} from '@groupe-savoy/teltonika-sdk';
 
 const server = new TeltonikaTCPServer({
   codecs: {
@@ -44,18 +74,15 @@ server.on('error', (device, error) => {
 server.listen(5000, '0.0.0.0');
 ```
 
-### Parsing Data Packets with Codec8e Parser
+### Parsing Data Packets with the Codec 8e Parser
 
-To parse Teltonika data packets directly using the `TeltonikaCodec8eParser`:
+You can also parse Teltonika data packets directly using the `TeltonikaCodec8eParser`:
 
-```typescript
-import { TeltonikaCodec8eParser } from 'teltonika-sdk';
+```ts
+import { TeltonikaCodec8eParser } from '@groupe-savoy/teltonika-sdk';
 
 const parser = new TeltonikaCodec8eParser();
-
-// Example buffer received from a Teltonika device
-const raw = Buffer.from(/* Received data */);
-const packet = parser.parsePacket(raw);
+const packet = parser.parsePacket(Buffer.from(/* received data */));
 ```
 
 ## Development
@@ -63,33 +90,37 @@ const packet = parser.parsePacket(raw);
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/Groupe-Savoy/teltonika-sdk.git
-$ cd teltonika-sdk
+git clone https://github.com/Groupe-Savoy/teltonika-sdk.git
+cd teltonika-sdk
 ```
 
 Install dependencies:
 
 ```bash
-$ pnpm install
+pnpm install
 ```
 
 Run the tests:
 
 ```bash
-$ pnpm run test
+pnpm run test
 ```
 
 Build the library:
 
 ```bash
-$ pnpm run build
+pnpm run build
 ```
 
 ## License
 
-This package is released under the [MIT License](LICENSE).  
-
+This project is released under the [MIT License](LICENSE.md).
 
 ## Support
 
-For questions, issues, or feedback, please visit the GitHub [issues page](https://github.com/Groupe-Savoy/teltonika-sdk/issues).
+For questions, issues, or feedback, please visit the GitHub [Issues page](https://github.com/Groupe-Savoy/teltonika-sdk/issues).
+
+## Contributing
+
+Contributions are welcome!
+Please read the [CONTRIBUTING](./CONTRIBUTING.md) guide for more information.
