@@ -1,11 +1,16 @@
-import { TeltonikaDataCodec, TeltonikaGPRSCodec, TeltonikaTCPServer } from '@/index';
+import { TeltonikaDataCodec, TeltonikaGPRSCodec, TeltonikaTLSServer } from '@/index';
+import { readFileSync } from 'node:fs';
 
-const server = new TeltonikaTCPServer({
+const server = new TeltonikaTLSServer({
   codecs: {
     data: TeltonikaDataCodec.Codec8e,
     gprs: TeltonikaGPRSCodec.Codec12
   },
-  timeout: 60000
+  timeout: 60000,
+
+  // Generate certificate from https://wiki.teltonika-gps.com/view/How_to_generate_TLS_certificates_(Windows)%3F# 
+  key: readFileSync('./examples/server/platform.key'),
+  cert: readFileSync('./examples/server/platform.crt'),
 });
 
 server.on('init', (device) => {

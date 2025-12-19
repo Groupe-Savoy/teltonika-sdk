@@ -22,5 +22,6 @@ export * from './parser/codec16';
 
 export * from './server/base';
 export * from './server/tcp';
+export * from './server/tls';
 
 export * from './utils';

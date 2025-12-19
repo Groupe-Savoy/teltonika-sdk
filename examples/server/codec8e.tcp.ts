@@ -17,7 +17,7 @@ server.on('buffer', (device, data) => {
 });
 
 server.on('error', (device, error) => {
-  console.log('error', device.imei, error);
+  console.log('error', device?.imei, error);
 });
 
 server.listen(4041, '0.0.0.0');

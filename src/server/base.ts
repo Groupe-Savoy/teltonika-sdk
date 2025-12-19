@@ -33,7 +33,7 @@ export abstract class TeltonikaBaseServer<
   response: [device: TeltonikaDevice<U>, data: PacketResponseRegistry[GC]],
   timeout: [device: TeltonikaDevice<U>],
   close: [device: TeltonikaDevice<U>],
-  error: [device: TeltonikaDevice<U>, error?: Error]
+  error: [device?: TeltonikaDevice<U>, error?: Error]
 }> {
   protected server!: T;
 
@@ -161,8 +161,8 @@ export abstract class TeltonikaBaseServer<
     device.socket.destroy();
   }
 
-  protected onDeviceError(device: TeltonikaDevice<U>, error?: Error) {
-    logger.error(`error: ${device.uuid}`);
+  protected onDeviceError(device?: TeltonikaDevice<U>, error?: Error) {
+    logger.error(`error: ${device?.uuid || 'not initialized'}`);
     this.emit('error', device, error);
   }
 

@@ -1,5 +1,8 @@
 node_modules
 dist
 *.log
+*.pem
+*.crt
+*.key
 .DS_Store
 coverage
