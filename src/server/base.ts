@@ -104,14 +104,14 @@ export abstract class TeltonikaBaseServer<
     socket.on('close', () => this.onDeviceClose(device));
   }
 
-  protected onDeviceInit(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+  protected onDeviceInit(device: TeltonikaDevice<U>, data: Buffer) {
     logger.info(`init: ${device.uuid}`);
     device.init(this.parsers.data.parseImei(data), this.codecs.gprs);
 
     this.emit('init', device);
   }
 
-  protected onDeviceBuffer(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+  protected onDeviceBuffer(device: TeltonikaDevice<U>, data: Buffer) {
     logger.info(`buffer: ${device.uuid}`);
     device.bufferPacket(data);
     this.emit('buffer', device, data);
@@ -124,7 +124,7 @@ export abstract class TeltonikaBaseServer<
     device.clearBuffer();
   }
 
-  protected onDeviceData(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+  protected onDeviceData(device: TeltonikaDevice<U>, data: Buffer) {
     try {
       const packet = this.parsers.data.parsePacket(data);
 
@@ -136,7 +136,7 @@ export abstract class TeltonikaBaseServer<
     }
   }
 
-  protected onDeviceResponse(device: TeltonikaDevice<U>, data: Buffer<ArrayBuffer>) {
+  protected onDeviceResponse(device: TeltonikaDevice<U>, data: Buffer) {
     try {
       const packet = this.parsers.gprs.parsePacket(data);
 
