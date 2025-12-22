@@ -19,6 +19,7 @@ export * from './parser/codec8e';
 export * from './parser/codec12';
 export * from './parser/codec14';
 export * from './parser/codec16';
+export * from './parser/index';
 
 export * from './server/base';
 export * from './server/tcp';
