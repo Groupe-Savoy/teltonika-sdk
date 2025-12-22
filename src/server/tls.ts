@@ -19,12 +19,19 @@ export class TeltonikaTLSServer<
     this.server.on('tlsClientError', (e) => this.onDeviceError(undefined, e));
   }
 
-  listen(port: number, host: string): void {
-    this.server.listen(port, host, () => logger.info(`tls server listen: ${host}:${port}`));
+  listen(port: number, host: string): Promise<void> {
+    return new Promise<void>((res) => {
+      this.server.listen(port, host, () => {
+        logger.info(`tls server listen: ${host}:${port}`);
+        res();
+      });
+    });
   }
 
-  close() {
-    this.server.close();
-    this.closeAllDevices();
+  close(): Promise<void> {
+    return new Promise((res) => {  
+      this.closeAllDevices();
+      this.server.close(() => res());
+    });
   }
 }

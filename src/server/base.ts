@@ -195,7 +195,7 @@ export abstract class TeltonikaBaseServer<
     });
   }
 
-  abstract listen(port: number, host?: string): void;
+  abstract listen(port: number, host?: string): Promise<void>;
 
-  abstract close(): void;
+  abstract close(): Promise<void>;
 }

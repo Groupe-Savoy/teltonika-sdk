@@ -18,12 +18,19 @@ export class TeltonikaTCPServer<
     this.server = createServer(this.onDeviceConnect.bind(this));
   }
 
-  listen(port: number, host: string): void {
-    this.server.listen(port, host, () => logger.info(`tcp server listen: ${host}:${port}`));
+  listen(port: number, host: string): Promise<void> {
+    return new Promise<void>((res) => {
+      this.server.listen(port, host, () => {
+        logger.info(`tcp server listen: ${host}:${port}`);
+        return res();
+      });
+    });
   }
 
   close() {
-    this.server.close();
-    this.closeAllDevices();
+    return new Promise<void>((res) => {      
+      this.closeAllDevices();
+      this.server.close(() => res());
+    });
   }
 }
