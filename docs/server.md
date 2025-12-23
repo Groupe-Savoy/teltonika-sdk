@@ -1,7 +1,6 @@
 ---
 title: Create a basic server
 group: Guides
-category: Guides
 ---
 
 # Server

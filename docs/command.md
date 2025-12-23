@@ -1,7 +1,6 @@
 ---
 title: Sending a GPRS command
 group: Guides
-category: Guides
 ---
 
 # Command

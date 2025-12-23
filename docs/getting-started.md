@@ -1,7 +1,6 @@
 ---
 title: Getting Started
 group: Guides
-category: Guides
 ---
 
 # Getting Started

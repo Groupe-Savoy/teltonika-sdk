@@ -11,7 +11,11 @@ export const HEADER_AVL_LENGTH = HEADER_LENGTH + CODEC_ID_LENGTH + NUMBER_OF_DAT
 export const HEADER_RESPONSE_LENGTH = HEADER_AVL_LENGTH;
 
 /**
+ * Represents the supported IO groups in Teltonika packets.
+ * These indicate the size of the IO data fields.
+ * 
  * @group Packet
+ * @enum {number}
  */
 export enum TeltonikaIoGroup {
   N1 = 1,
@@ -22,12 +26,21 @@ export enum TeltonikaIoGroup {
 }
 
 /**
+ * Represents a map of IO elements in a packet.
+ * The keys are IO IDs, and the values are the corresponding binary values.
+ * 
  * @group Packet
+ * @typedef {Record<number, Buffer>} TeltonikaIo
  */
 export type TeltonikaIo = Record<number, Buffer>;
 
 /**
+ * Defines the structure of IO data inside a Teltonika packet.
+ * 
  * @group Packet
+ * @typedef {object} TeltonikaIoLayout
+ * @property {number} [countLength] - Length of the "number of IO elements" field in bytes.
+ * @property {number} [idLength] - Length of the IO ID field in bytes.
  */
 export type TeltonikaIoLayout = {
   countLength?: number;
@@ -35,21 +48,56 @@ export type TeltonikaIoLayout = {
 }
 
 /**
+ * Base abstract class representing a Teltonika data packet.
+ * Handles parsing of packet headers, CRC validation, and extraction of records.
+ * 
  * @abstract
  * @class TeltonikaBasePacket
  * @group Packet
+ * @template T
+ * @example
+ * ```ts
+ * class TeltonikaCodec8AVLPacket extends TeltonikaBasePacket<TeltonikaCodec8AVLRecord> {
+ *   parseRecords(raw: Buffer): TeltonikaCodec8AVLRecord[] {
+ *     // Implement codec-specific parsing here
+ *   }
+ * }
+ *
+ * const packet = new TeltonikaCodec8AVLPacket(rawBuffer);
+ * console.log(packet.records);
+ * ```
  */
 export abstract class TeltonikaBasePacket<T = unknown> {
+  /** Preamble of the packet (first 4 bytes) */
   protected preamble!: Buffer;
+
+  /** Size of the data part of the packet */
   protected size!: number;
+
+  /** Codec identifier of this packet */
   protected codecId!: TeltonikaCodec;
+
+  /** Number of data records (part 1) */
   protected numberOfData1!: number;
+
+  /** Number of data records (part 2) */
   protected numberOfData2!: number;
+
+  /** Raw data buffer containing the payload */
   protected data!: Buffer;
+
+  /** CRC-16 checksum from the packet */
   protected crc!: number;
+
+  /** Full raw buffer of the packet, including header and CRC */
   protected raw!: Buffer;
+
+  /** Parsed records from the packet */
   public records!: T[];
 
+  /**
+   * Returns the internal state of the packet.
+   */
   get state() {
     return {
       preamble: this.preamble,
@@ -63,14 +111,27 @@ export abstract class TeltonikaBasePacket<T = unknown> {
     };
   }
 
+  /**
+   * Calculates the CRC-16 of the data payload.
+   */
   get calculatedCrc() {
     return calculateCrc(this.data);
   }
 
+  /**
+   * Creates a response buffer to acknowledge receipt of the packet.
+   * Typically contains the number of data records processed.
+   */
   get response() {
     return createBuffer(4, Buffer.from([this.numberOfData1]));
   }
 
+  /**
+   * Initializes a new packet instance by parsing the raw buffer.
+   * Validates CRC and extracts records using `parseRecords`.
+   * @param {Buffer} raw - The raw packet buffer received from the device.
+   * @throws {Error} Throws if CRC validation fails.
+   */
   constructor(raw: Buffer) {
     this.raw = raw;
     this.parse(raw);
@@ -143,6 +204,17 @@ export abstract class TeltonikaBasePacket<T = unknown> {
     this.crc = raw.readUInt32BE(raw.length - CRC_OFFSET_FROM_END);
   }
 
+  /**
+   * Reads an unsigned integer from a buffer at a specific offset with a given byte length.
+   *
+   * @private
+   * @param {Buffer} data - The buffer containing the integer.
+   * @param {number} offset - The starting position in the buffer to read from.
+   * @param {number} length - The number of bytes to read (1, 2, or 4).
+   * @returns {number} The unsigned integer value read from the buffer.
+   *
+   * @throws {Error} Throws if an unsupported length is provided.
+   */
   private readUIntByLength(
     data: Buffer,
     offset: number,

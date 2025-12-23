@@ -1,7 +1,6 @@
 ---
 title: Parse the Teltonika codec
 group: Guides
-category: Guides
 ---
 
 # Parser
