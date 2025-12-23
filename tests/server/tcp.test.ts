@@ -1,6 +1,7 @@
 import { createConnection, Socket } from 'net';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { 
+  TeltonikaCodec12Command,
   TeltonikaCodec12ResponsePacket, 
   TeltonikaCodec8eAVLPacket, 
   TeltonikaDataCodec, 
@@ -116,5 +117,59 @@ describe('TeltonikaTCPServer', () => {
 
     expect(spy).toHaveBeenCalledOnce();
     expect(spy).toHaveBeenCalledWith(device, packet);
+  });
+
+  it('should get a device timeout', { timeout: 20000 }, async () => {
+    const spy = vi.fn();
+    const client = createConnection({ port: 4040, keepAlive: false });
+
+    server.on('timeout', spy);
+    await wait(client, 'connect');
+    
+    client.write(Buffer.from('000F333536333037303432343431303133', 'hex'));
+    await wait(server, 'timeout');
+
+    const device = server.getDevice('356307042441013');
+
+    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledWith(device);
+  });
+
+  it('should get a device error', async () => {
+    const spy = vi.fn();
+    const client = createConnection({ port: 4040 });
+    
+    server.on('error', spy);
+    await wait(client, 'connect');
+    
+    client.write(Buffer.from('000F333536333037303432343431303133', 'hex'));
+    await wait(client, 'data');
+
+    client.write(Buffer.from('00000000000000900C010600000088494E493A323031392F372F323220373A3232205254433A323031392F3724444220373A3533205253543A32204552523A312053523A302042523A302043463A302046473A3020464C3A302054553A302F302055543A3020534D533A30204E4F4750533A303A3330204750533A31205341543A302052533A332052463A36352053463A31204D443A30010000C78F', 'hex'));
+    await wait(server, 'error');
+
+    const device = server.getDevice('356307042441013');
+
+    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledWith(device, new Error('CRC-16 validation failed: expected 51087 got 7778'));
+  });
+
+  it('should send a command to the device', async () => {
+    const spy = vi.fn();
+    const client = createConnection({ port: 4040 });
+
+    await wait(client, 'connect');
+    
+    client.write(Buffer.from('000F333536333037303432343431303133', 'hex'));
+    await wait(client, 'data');
+
+    client.on('data', spy);
+    server.sendCommand('356307042441013', 'getver');
+    await wait(client, 'data');
+
+    const cmd = new TeltonikaCodec12Command('getver');
+
+    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledWith(cmd.toBuffer());
   });
 });
