@@ -1,0 +1,32 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Teltonika SDK Typescript",
+  "entryPoints": [
+    "./src/index.ts"
+  ],
+  "projectDocuments": [
+    "./docs/getting-started.md",
+    "./docs/parser.md",
+    "./docs/server.md",
+    "./docs/command.md",
+  ],
+  "navigationLinks": {
+    "GitHub": "https://github.com/Groupe-Savoy/teltonika-sdk",
+  },
+  "githubPages": true,
+  "cleanOutputDir": true,
+  "navigation": {
+    "includeGroups": true,
+    "includeCategories": false,
+    "includeFolders": true,
+    "compactFolders": true,
+    "excludeReferences": true
+  },
+  "groupReferencesByType": true,
+  "groupOrder": [
+    "Guides",
+    "*"
+  ],
+  "categorizeByGroup": true,
+  "out": "dist-doc"
+}

@@ -12,6 +12,7 @@ export * from './packet/codec8e';
 export * from './packet/codec12';
 export * from './packet/codec14';
 export * from './packet/codec16';
+export * from './packet/index';
 
 export * from './parser/base';
 export * from './parser/codec8';

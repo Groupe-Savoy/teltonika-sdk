@@ -7,6 +7,9 @@ export const CODEC14_RESPONSE_IMEI_LENGTH = 8;
 export const CODEC14_HEADER_LENGTH = HEADER_RESPONSE_LENGTH + CODEC14_RESPONSE_TYPE_LENGTH + CODEC14_RESPONSE_SIZE_LENGTH;
 export const CODEC14_HEADER_IMEI_LENGTH = CODEC14_HEADER_LENGTH + CODEC14_RESPONSE_IMEI_LENGTH;
 
+/**
+ * @group Packet
+ */
 export type TeltonikaCodec14ResponseRecord = TeltonikaCodec12ResponseRecord & {
   imei: string;
 }

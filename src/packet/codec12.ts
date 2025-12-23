@@ -4,6 +4,9 @@ export const CODEC12_RESPONSE_TYPE_LENGTH = 1;
 export const CODEC12_RESPONSE_SIZE_LENGTH = 4;
 export const CODEC12_HEADER_LENGTH = HEADER_RESPONSE_LENGTH + CODEC12_RESPONSE_TYPE_LENGTH + CODEC12_RESPONSE_SIZE_LENGTH;
 
+/**
+ * @group Packet
+ */
 export type TeltonikaCodec12ResponseRecord = {
   type: number,
   size: number,

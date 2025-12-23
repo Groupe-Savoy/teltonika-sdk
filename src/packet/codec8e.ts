@@ -20,6 +20,9 @@ export const CODEC8E_IO_LAYOUT = {
   idLength: 2,
 };
 
+/**
+ * @group Packet
+ */
 export type TeltonikaCodec8eAVLRecord = TeltonikaCodec8AVLRecord;
 
 export class TeltonikaCodec8eAVLPacket extends TeltonikaBasePacket<TeltonikaCodec8eAVLRecord> {

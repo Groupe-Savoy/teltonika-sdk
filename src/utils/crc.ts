@@ -3,7 +3,7 @@
 * Calculate CRC-16 (IBM / ANSI) checksum for Teltonika packets.
 * CRC is calculated over the "data field":
 * from Codec ID (byte 8) up to Number of Data 2.
-*
+* @group Utils
 * @param {Buffer} data - Buffer containing the data field
 * @returns Calculated CRC-16 value
 *

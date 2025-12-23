@@ -10,6 +10,9 @@ export const HEADER_LENGTH = PREAMBLE_LENGTH + SIZE_LENGTH;
 export const HEADER_AVL_LENGTH = HEADER_LENGTH + CODEC_ID_LENGTH + NUMBER_OF_DATA_LENGTH;
 export const HEADER_RESPONSE_LENGTH = HEADER_AVL_LENGTH;
 
+/**
+ * @group Packet
+ */
 export enum TeltonikaIoGroup {
   N1 = 1,
   N2 = 2,
@@ -18,13 +21,24 @@ export enum TeltonikaIoGroup {
   NX = 0
 }
 
+/**
+ * @group Packet
+ */
 export type TeltonikaIo = Record<number, Buffer>;
 
+/**
+ * @group Packet
+ */
 export type TeltonikaIoLayout = {
   countLength?: number;
   idLength?: number;
 }
 
+/**
+ * @abstract
+ * @class TeltonikaBasePacket
+ * @group Packet
+ */
 export abstract class TeltonikaBasePacket<T = unknown> {
   protected preamble!: Buffer;
   protected size!: number;

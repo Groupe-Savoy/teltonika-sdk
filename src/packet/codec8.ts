@@ -18,6 +18,9 @@ export const CODEC8_IO_LAYOUT = {
   idLength: 1,
 };
 
+/**
+ * @group Packet
+ */
 export type TeltonikaCodec8AVLRecord = {
   timestamp: Date;
   priority: number;

@@ -20,6 +20,9 @@ export const CODEC16_IO_LAYOUT = {
   idLength: 2,
 };
 
+/**
+ * @group Packet
+ */
 export enum TeltonikaCodec16IoType {
   OnExit = 0,
   OnEntrance = 1,
@@ -31,6 +34,9 @@ export enum TeltonikaCodec16IoType {
   Periodical = 7
 }
 
+/**
+ * @group Packet
+ */
 export type TeltonikaCodec16AVLRecord = TeltonikaCodec8AVLRecord & {
   type: TeltonikaCodec16IoType,
 };

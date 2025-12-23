@@ -37,6 +37,7 @@
     "dev:server:codec12:tls": "cross-env NODE_DEBUG=tls DEBUG=teltonika-sdk:* tsx watch ./examples/server/codec12.tls.ts",
     "test": "vitest",
     "coverage": "vitest run --coverage",
+    "docs": "typedoc --categorizeByGroup",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "release": "node ./scripts/version"
@@ -53,6 +54,7 @@
     "jiti": "^2.6.1",
     "tsdown": "^0.16.4",
     "tsx": "^4.21.0",
+    "typedoc": "^0.28.15",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.0",
     "vitest": "^4.0.9"

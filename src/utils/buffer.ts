@@ -1,7 +1,8 @@
 /**
  * Create a fixed-size buffer and right-align the provided data.
  * Commonly used for CRC comparison or protocol-aligned values.
- *
+ *  
+ * @group Utils
  * @param {number} size - Desired buffer size
  * @param {Buffer} data - Source data buffer
  * @returns Right-aligned buffer with zero-padding
@@ -36,7 +37,7 @@ export function createBuffer(size: number, data: Buffer) {
  * Example:
  *   "868373071752218"
  *   → <Buffer 08 68 37 30 71 75 22 18>
- *
+ * @group Utils
  * @param {string} imei - IMEI as a numeric string (digits only).
  * @returns {Buffer} A Buffer containing the BCD-encoded IMEI.
  *

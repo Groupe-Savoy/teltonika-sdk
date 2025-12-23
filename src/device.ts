@@ -4,6 +4,10 @@ import { createBuffer } from './utils';
 import type { TeltonikaGPRSCodec } from './codec';
 import { TeltonikaCommandFactory } from './command';
 
+/**
+ * @class TeltonikaDevice
+ * @group Device
+ */
 export class TeltonikaDevice<T extends Socket> {
   public uuid: string;
 

@@ -10,6 +10,9 @@ import { TeltonikaParserFactory } from '@/parser';
 import type { DataParserRegistry, GprsParserRegistry } from '@/parser';
 import type { PacketDataRegistry, PacketResponseRegistry } from '@/packet';
 
+/**
+ * @group Server
+ */
 export interface TeltonikaBaseServerOptions<
   DC extends TeltonikaDataCodec = TeltonikaDataCodec,
   GC extends TeltonikaGPRSCodec = TeltonikaGPRSCodec
@@ -21,6 +24,11 @@ export interface TeltonikaBaseServerOptions<
   };
 }
 
+/**
+ * @abstract
+ * @class TeltonikaBaseServer
+ * @group Server
+ */
 export abstract class TeltonikaBaseServer<
   T,
   U extends Socket,

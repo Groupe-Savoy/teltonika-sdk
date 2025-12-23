@@ -1,6 +1,11 @@
 import type { TeltonikaCodec } from '@/codec';
 import type { TeltonikaBasePacket } from '@/packet/base';
 
+/**
+ * @abstract
+ * @class TeltonikaBaseParser
+ * @group Parser
+ */
 export abstract class TeltonikaBaseParser<T extends TeltonikaBasePacket> {
   static codec: TeltonikaCodec;
 

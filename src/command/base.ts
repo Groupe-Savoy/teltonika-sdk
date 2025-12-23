@@ -1,6 +1,9 @@
 import { inspect } from 'util';
 import { calculateCrc, createBuffer } from '@/utils';
 
+/**
+ * @group Command
+ */
 export type TeltonikaBaseCommandConstructor = {
   preamble?: Buffer;
   type: Buffer;
@@ -10,6 +13,11 @@ export type TeltonikaBaseCommandConstructor = {
   imei?: Buffer;
 }
 
+/**
+ * @abstract
+ * @class TeltonikaBaseCommand
+ * @group Command
+ */
 export abstract class TeltonikaBaseCommand {
   protected preamble!: Buffer;
   protected codecId!: Buffer;
