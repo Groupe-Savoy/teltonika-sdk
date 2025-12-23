@@ -100,6 +100,17 @@ The following table shows the server protocols currently supported:
 * ❌ Not implemented
 
 
+## Learn More
+
+The online documentation is the best place to learn how to use the SDK efficiently.
+
+- Start here if you’re new
+- Dive deeper for advanced server, codec, and command usage
+- Explore the full API reference
+
+**[Access the documentation](https://groupe-savoy.github.io/teltonika-sdk/documents/Getting_Started.html)**
+
+
 ## Development
 
 Clone the repository:
