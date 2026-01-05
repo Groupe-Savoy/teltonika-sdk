@@ -21,11 +21,34 @@ export const CODEC8E_IO_LAYOUT = {
 };
 
 /**
+ * Represents an AVL record for Teltonika Codec 8e.
+ * Alias for TeltonikaCodec8AVLRecord.
+ * 
  * @group Packet
+ * @typedef {TeltonikaCodec8AVLRecord} TeltonikaCodec8eAVLRecord
  */
 export type TeltonikaCodec8eAVLRecord = TeltonikaCodec8AVLRecord;
 
+/**
+ * Class for parsing Teltonika Codec 8e AVL packets.
+ * Extends TeltonikaBasePacket to handle Codec 8e specific record parsing.
+ * 
+ * @class TeltonikaCodec8eAVLPacket
+ * @group Packet
+ * @extends TeltonikaBasePacket<TeltonikaCodec8eAVLRecord>
+ * @example
+ * ```ts
+ * const packet = new TeltonikaCodec8eAVLPacket(rawBuffer);
+ * const records = packet.records; // Array of TeltonikaCodec8eAVLRecord
+ * ```
+ */
 export class TeltonikaCodec8eAVLPacket extends TeltonikaBasePacket<TeltonikaCodec8eAVLRecord> {
+  /**
+   * Parses the raw buffer into an array of TeltonikaCodec8eAVLRecord objects.
+   * 
+   * @param {Buffer} raw - The raw buffer containing the packet data.
+   * @returns {TeltonikaCodec8eAVLRecord[]} An array of parsed AVL records.
+   */
   parseRecords(raw: Buffer): TeltonikaCodec8eAVLRecord[] {
     let offset = HEADER_AVL_LENGTH;
     const records: TeltonikaCodec8eAVLRecord[] = [];

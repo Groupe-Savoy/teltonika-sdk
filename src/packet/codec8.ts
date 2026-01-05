@@ -19,7 +19,22 @@ export const CODEC8_IO_LAYOUT = {
 };
 
 /**
+ * Represents an AVL record for Teltonika Codec 8.
+ * Contains timestamp, priority, GPS data, event ID, and IO elements.
+ * 
  * @group Packet
+ * @typedef {object} TeltonikaCodec8AVLRecord
+ * @property {Date} timestamp - The timestamp of the record.
+ * @property {number} priority - The priority level of the record.
+ * @property {object} gps - GPS data including longitude, latitude, altitude, angle, satellites, and speed.
+ * @property {number} gps.longitude - Longitude in degrees.
+ * @property {number} gps.latitude - Latitude in degrees.
+ * @property {number} gps.altitude - Altitude in meters.
+ * @property {number} gps.angle - Angle in degrees.
+ * @property {number} gps.satellites - Number of satellites.
+ * @property {number} gps.speed - Speed in km/h.
+ * @property {number} event - The event ID.
+ * @property {TeltonikaIo} io - IO elements as a map of ID to buffer.
  */
 export type TeltonikaCodec8AVLRecord = {
   timestamp: Date;
@@ -36,7 +51,25 @@ export type TeltonikaCodec8AVLRecord = {
   io: TeltonikaIo;
 }
 
+/**
+ * Class for parsing Teltonika Codec 8 AVL packets.
+ * Extends TeltonikaBasePacket to handle Codec 8 specific record parsing.
+ * 
+ * @class TeltonikaCodec8AVLPacket
+ * @group Packet
+ * @extends TeltonikaBasePacket<TeltonikaCodec8AVLRecord>
+ * @example
+ * ```ts
+ * const packet = new TeltonikaCodec8AVLPacket(rawBuffer);
+ * const records = packet.records; // Array of TeltonikaCodec8AVLRecord
+ * ```
+ */
 export class TeltonikaCodec8AVLPacket extends TeltonikaBasePacket<TeltonikaCodec8AVLRecord> {
+  /**
+   * Parses the raw buffer into an array of TeltonikaCodec8AVLRecord objects.
+   * @param {Buffer} raw - The raw buffer containing the packet data.
+   * @returns {TeltonikaCodec8AVLRecord[]} An array of parsed AVL records.
+   */
   parseRecords(raw: Buffer): TeltonikaCodec8AVLRecord[] {
     let offset = HEADER_AVL_LENGTH;
     const records: TeltonikaCodec8AVLRecord[] = [];

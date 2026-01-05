@@ -21,7 +21,10 @@ export const CODEC16_IO_LAYOUT = {
 };
 
 /**
+ * Represents the IO types for Teltonika Codec 16.
+ * 
  * @group Packet
+ * @enum {number}
  */
 export enum TeltonikaCodec16IoType {
   OnExit = 0,
@@ -35,13 +38,37 @@ export enum TeltonikaCodec16IoType {
 }
 
 /**
+ * Represents an AVL record for Teltonika Codec 16.
+ * Extends TeltonikaCodec8AVLRecord with an additional type field.
+ * 
  * @group Packet
+ * @typedef {TeltonikaCodec8AVLRecord & {type: TeltonikaCodec16IoType}} TeltonikaCodec16AVLRecord
+ * @property {TeltonikaCodec16IoType} type - The IO type for the record.
  */
 export type TeltonikaCodec16AVLRecord = TeltonikaCodec8AVLRecord & {
   type: TeltonikaCodec16IoType,
 };
 
+/**
+ * Class for parsing Teltonika Codec 16 AVL packets.
+ * Extends TeltonikaBasePacket to handle Codec 16 specific record parsing.
+ * 
+ * @class TeltonikaCodec16AVLPacket
+ * @group Packet
+ * @extends TeltonikaBasePacket<TeltonikaCodec16AVLRecord>
+ * @example
+ * ```ts
+ * const packet = new TeltonikaCodec16AVLPacket(rawBuffer);
+ * const records = packet.records; // Array of TeltonikaCodec16AVLRecord
+ * ```
+ */
 export class TeltonikaCodec16AVLPacket extends TeltonikaBasePacket<TeltonikaCodec16AVLRecord> {
+  /**
+   * Parses the raw buffer into an array of TeltonikaCodec16AVLRecord objects.
+   * 
+   * @param {Buffer} raw - The raw buffer containing the packet data.
+   * @returns {TeltonikaCodec16AVLRecord[]} An array of parsed AVL records.
+   */
   parseRecords(raw: Buffer): TeltonikaCodec16AVLRecord[] {
     let offset = HEADER_AVL_LENGTH;
     const records: TeltonikaCodec16AVLRecord[] = [];
