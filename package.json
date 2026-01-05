@@ -16,15 +16,18 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.mjs",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.cts",
   "exports": {
-    ".": "./dist/index.mjs",
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown --format esm --format cjs",
     "dev": "tsx watch",
     "dev:parser:codec8": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec8.ts",
     "dev:parser:codec8e": "cross-env DEBUG=teltonika-sdk:* tsx watch ./examples/parser/codec8e.ts",
