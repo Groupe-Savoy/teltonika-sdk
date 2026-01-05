@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-01-05
+### Added
+- Comprehensive documentation generated with **TypeDoc** for all **parsers**, **servers**, **packets**, base classes, and **device**
+- Tests for **parsers** and **packets** for all supported codecs (**8**, **8e**, **12**, **14**, **16**)
+- Tests for **TCP server**, **device**, and buffer utilities
+
 ## [0.1.2] - 2025-12-19
 ### Changed
 - Removed automatic pushing from the **release script**.
@@ -27,7 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`Teltonika Command`** support for codecs: **12, 14**
 - **`Teltonika Device`** integration to retrieve IMEI, access data, and send commands
 
-[Unreleased]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Groupe-Savoy/teltonika-sdk/releases/tag/v0.1.0
