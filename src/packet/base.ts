@@ -290,9 +290,9 @@ export abstract class TeltonikaBasePacket<T = unknown> {
         value = data.subarray(offset, offset + n);
         offset += n;
       } else {
-        const length = data.readUInt8(offset);
+        const length = data.readUInt16BE(offset);
 
-        offset += 1;
+        offset += 2;
         value = data.subarray(offset, offset + length);
         offset += length;
       }
@@ -420,8 +420,9 @@ export abstract class TeltonikaBasePacket<T = unknown> {
         if (size > 0) {
           offset += size;
         } else {
-          const len = data.readUInt8(offset);
-          offset += 1 + len;
+          const len = data.readUInt16BE(offset);
+
+          offset += 2 + len;
         }
       }
     }
