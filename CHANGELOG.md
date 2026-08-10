@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-08-10
+### Fixed
+- Upgraded **all dependencies**
+- Fixed **CI/CD** to work with **npm** security requirements
+
 ## [0.3.2] - 2026-06-26
 ### Fixed
 - Fix packet parse error when have an **NX of X Byte IO configured**.
@@ -45,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`Teltonika Command`** support for codecs: **12, 14**
 - **`Teltonika Device`** integration to retrieve IMEI, access data, and send commands
 
-[Unreleased]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/Groupe-Savoy/teltonika-sdk/compare/v0.2.0...v0.3.0
